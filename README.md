@@ -31,4 +31,9 @@ https://github.com/luismendes070/desafio-parcelas/blob/main/credit-application-s
     verify(exactly = 1) { customerRepository.save(fakeCustomer) }
   }
 
+https://github.com/luismendes070/desafio-parcelas/blob/main/credit-application-system/src/main/kotlin/me/dio/credit/application/system/entity/Customer.kt
+
+          @Column(nullable = false) var currentDay: LocalDate = "2023-12-06",
+        @Column(nullable = false) var installments: Int = 0,
+
   </code>
