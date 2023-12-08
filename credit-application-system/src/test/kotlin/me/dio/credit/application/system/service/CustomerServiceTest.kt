@@ -26,143 +26,149 @@ import java.util.*
 //@ActiveProfiles("test")
 @ExtendWith(MockKExtension::class)
 class CustomerServiceTest {
-  @MockK lateinit var customerRepository: CustomerRepository
-  @InjectMockKs lateinit var customerService: CustomerService
+    @MockK
+    lateinit var customerRepository: CustomerRepository
+    @InjectMockKs
+    lateinit var customerService: CustomerService
 
-  @Test
-  fun `should the date of the first installment must be a maximum of 3 months after the current day`(){
-    //given
-    val fakeCustomer: Customer = buildCustomer()
-    every { customerRepository.save(any()) } returns fakeCustomer
-    //when
-    val actual: Customer = customerService.save(fakeCustomer)
-    //then ChatGPT
+    @Test
+    fun `should the date of the first installment must be a maximum of 3 months after the current day`() {
+        //given
+        val fakeCustomer: Customer = buildCustomer()
+        every { customerRepository.save(any()) } returns fakeCustomer
+        //when
+        val actual: Customer = customerService.save(fakeCustomer)
+        //then ChatGPT
 
-    // Get the current date and time
-    val currentDate = LocalDateTime.now()
+        // Get the current date and time
+        val currentDate = LocalDateTime.now()
 
-    // Calculate the date for the first installment (maximum 3 months from now)
-    val firstInstallmentDate = currentDate.plusMonths(3)
+        // Calculate the date for the first installment (maximum 3 months from now)
+        val firstInstallmentDate = currentDate.plusMonths(3)
 
-    // Print the result
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-    println("Current Date and Time: ${currentDate.format(formatter)}")
-    println("First Installment Date: ${firstInstallmentDate.format(formatter)}")
+        // Print the result
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        println("Current Date and Time: ${currentDate.format(formatter)}")
+        println("First Installment Date: ${firstInstallmentDate.format(formatter)}")
 
-    // Use AssertJ to make assertions
-    assertThat(firstInstallmentDate).isAfterOrEqualTo(currentDate)
-            .isBeforeOrEqualTo(currentDate.plusMonths(3))
+        // Use AssertJ to make assertions
+        assertThat(firstInstallmentDate).isAfterOrEqualTo(currentDate)
+                .isBeforeOrEqualTo(currentDate.plusMonths(3))
 
-    Assertions.assertThat(actual).isNotNull
-    Assertions.assertThat(actual).isSameAs(fakeCustomer)
-    verify(exactly = 1) { customerRepository.save(fakeCustomer) }
-  }
-
-  @Test
-  fun `should the maximum installments allowed will be 48`(){
-    //given
-    val fakeCustomer: Customer = buildCustomer()
-    every { customerRepository.save(any()) } returns fakeCustomer
-    //when
-    val actual: Customer = customerService.save(fakeCustomer)
-
-    actual.installments = 48
-
-    //then
-    if( actual.installments > 0 && actual.installments < 48){
-      Assertions.assertThat(actual.installments,48)
-    }else{
-      // Get the current date and time
-      val currentDate = LocalDateTime.now()
-      // Calculate the date for the first installment (maximum 3 months from now)
-      val firstInstallmentDate = currentDate.plusMonths(3)
-      // Example failing assertion using fail
-      if (firstInstallmentDate.isAfter(currentDate.plusMonths(3))) {
-        fail("Assertion failed: First installment date is after 3 months from now.")
-      }
+        Assertions.assertThat(actual).isNotNull
+        Assertions.assertThat(actual).isSameAs(fakeCustomer)
+        verify(exactly = 1) { customerRepository.save(fakeCustomer) }
     }
-    Assertions.assertThat(actual).isNotNull
-    Assertions.assertThat(actual).isSameAs(fakeCustomer)
-    verify(exactly = 1) { customerRepository.save(fakeCustomer) }
-  }
 
-  @Test
-  fun `should create customer`(){
-    //given
-    val fakeCustomer: Customer = buildCustomer()
-    every { customerRepository.save(any()) } returns fakeCustomer
-    //when
-    val actual: Customer = customerService.save(fakeCustomer)
-    //then
-    Assertions.assertThat(actual).isNotNull
-    Assertions.assertThat(actual).isSameAs(fakeCustomer)
-    verify(exactly = 1) { customerRepository.save(fakeCustomer) }
-  }
+    @Test
+    fun `should the maximum installments allowed will be 48`() {
+        //given
+        val fakeCustomer: Customer = buildCustomer()
+        every { customerRepository.save(any()) } returns fakeCustomer
+        //when
+        val actual: Customer = customerService.save(fakeCustomer)
 
-  @Test
-  fun `should find customer by id`() {
-    //given
-    val fakeId: Long = Random().nextLong()
-    val fakeCustomer: Customer = buildCustomer(id = fakeId)
-    every { customerRepository.findById(fakeId) } returns Optional.of(fakeCustomer)
-    //when
-    val actual: Customer = customerService.findById(fakeId)
-    //then
-    Assertions.assertThat(actual).isNotNull
-    Assertions.assertThat(actual).isExactlyInstanceOf(Customer::class.java)
-    Assertions.assertThat(actual).isSameAs(fakeCustomer)
-    verify(exactly = 1) { customerRepository.findById(fakeId) }
-  }
+        actual.installments = 48
 
-  @Test
-  fun `should not find customer by invalid id and throw BusinessException`() {
-    //given
-    val fakeId: Long = Random().nextLong()
-    every { customerRepository.findById(fakeId) } returns Optional.empty()
-    //when
-    //then
-    Assertions.assertThatExceptionOfType(BusinessException::class.java)
-      .isThrownBy { customerService.findById(fakeId) }
-      .withMessage("Id $fakeId not found")
-    verify(exactly = 1) { customerRepository.findById(fakeId) }
-  }
+        //then
+        if (actual.installments > 0 && actual.installments < 48) {
+            Assertions.assertThat(actual.installments, 48)
+        } else {
+            // Get the current date and time
+            val currentDate = LocalDateTime.now()
+            // Calculate the date for the first installment (maximum 3 months from now)
+            val firstInstallmentDate = currentDate.plusMonths(3)
+            // Example failing assertion using fail
+            if (firstInstallmentDate.isAfter(currentDate.plusMonths(3))) {
+                fail("Assertion failed: First installment date is after 3 months from now.")
+            }
+        }
+        Assertions.assertThat(actual).isNotNull
+        Assertions.assertThat(actual).isSameAs(fakeCustomer)
+        verify(exactly = 1) { customerRepository.save(fakeCustomer) }
+    }
 
-  @Test
-  fun `should delete customer by id`() {
-    //given
-    val fakeId: Long = Random().nextLong()
-    val fakeCustomer: Customer = buildCustomer(id = fakeId)
-    every { customerRepository.findById(fakeId) } returns Optional.of(fakeCustomer)
-    every { customerRepository.delete(fakeCustomer) } just runs
-    //when
-    customerService.delete(fakeId)
-    //then
-    verify(exactly = 1) { customerRepository.findById(fakeId) }
-    verify(exactly = 1) { customerRepository.delete(fakeCustomer) }
-  }
+    @Test
+    fun `should create customer`() {
+        //given
+        val fakeCustomer: Customer = buildCustomer()
+        every { customerRepository.save(any()) } returns fakeCustomer
+        //when
+        val actual: Customer = customerService.save(fakeCustomer)
+        //then
+        Assertions.assertThat(actual).isNotNull
+        Assertions.assertThat(actual).isSameAs(fakeCustomer)
+        verify(exactly = 1) { customerRepository.save(fakeCustomer) }
+    }
+
+    @Test
+    fun `should find customer by id`() {
+        //given
+        val fakeId: Long = Random().nextLong()
+        val fakeCustomer: Customer = buildCustomer(id = fakeId)
+        every { customerRepository.findById(fakeId) } returns Optional.of(fakeCustomer)
+        //when
+        val actual: Customer = customerService.findById(fakeId)
+        //then
+        Assertions.assertThat(actual).isNotNull
+        Assertions.assertThat(actual).isExactlyInstanceOf(Customer::class.java)
+        Assertions.assertThat(actual).isSameAs(fakeCustomer)
+        verify(exactly = 1) { customerRepository.findById(fakeId) }
+    }
+
+    @Test
+    fun `should not find customer by invalid id and throw BusinessException`() {
+        //given
+        val fakeId: Long = Random().nextLong()
+        every { customerRepository.findById(fakeId) } returns Optional.empty()
+        //when
+        //then
+        Assertions.assertThatExceptionOfType(BusinessException::class.java)
+                .isThrownBy { customerService.findById(fakeId) }
+                .withMessage("Id $fakeId not found")
+        verify(exactly = 1) { customerRepository.findById(fakeId) }
+    }
+
+    @Test
+    fun `should delete customer by id`() {
+        //given
+        val fakeId: Long = Random().nextLong()
+        val fakeCustomer: Customer = buildCustomer(id = fakeId)
+        every { customerRepository.findById(fakeId) } returns Optional.of(fakeCustomer)
+        every { customerRepository.delete(fakeCustomer) } just runs
+        //when
+        customerService.delete(fakeId)
+        //then
+        verify(exactly = 1) { customerRepository.findById(fakeId) }
+        verify(exactly = 1) { customerRepository.delete(fakeCustomer) }
+    }
 
 
-  private fun buildCustomer(
-    firstName: String = "Cami",
-    lastName: String = "Cavalcante",
-    cpf: String = "28475934625",
-    email: String = "camila@gmail.com",
-    password: String = "12345",
-    zipCode: String = "12345",
-    street: String = "Rua da Cami",
-    income: BigDecimal = BigDecimal.valueOf(1000.0),
-    id: Long = 1L
-  ) = Customer(
-    firstName = firstName,
-    lastName = lastName,
-    cpf = cpf,
-    email = email,
-    password = password,
-    address = Address(
-      zipCode = zipCode,
-      street = street,
-    ),
-    income = income,
-    id = id
-  )
+    private fun buildCustomer(
+            currentDay: LocalDateTime = LocalDateTime.now(),
+            installments: Int = 48,
+            firstName: String = "Cami",
+            lastName: String = "Cavalcante",
+            cpf: String = "28475934625",
+            email: String = "camila@gmail.com",
+            password: String = "12345",
+            zipCode: String = "12345",
+            street: String = "Rua da Cami",
+            income: BigDecimal = BigDecimal.valueOf(1000.0),
+            id: Long = 1L
+    ) = Customer(
+            currentDay = currentDay,
+            installments = installments,
+            firstName = firstName,
+            lastName = lastName,
+            cpf = cpf,
+            email = email,
+            password = password,
+            address = Address(
+                    zipCode = zipCode,
+                    street = street,
+            ),
+            income = income,
+            id = id
+    )
 }
