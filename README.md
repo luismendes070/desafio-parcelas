@@ -37,3 +37,8 @@ https://github.com/luismendes070/desafio-parcelas/blob/main/credit-application-s
         @Column(nullable = false) var installments: Int = 0,
 
   </code>
+
+IntelliJ plugins
+Hiberbee
+Rainbow brackets
+Mario Progress Bar
