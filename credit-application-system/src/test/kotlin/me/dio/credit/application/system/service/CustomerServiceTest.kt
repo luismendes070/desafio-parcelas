@@ -72,18 +72,7 @@ class CustomerServiceTest {
         // actual.installments = 48
 
         //then
-        if (actual.installments > 0 && actual.installments < 48) {
-            Assertions.assertThat(actual.installments, 48)
-        } else {
-            // Get the current date and time
-            val currentDate = LocalDateTime.now()
-            // Calculate the date for the first installment (maximum 3 months from now)
-            val firstInstallmentDate = currentDate.plusMonths(3)
-            // Example failing assertion using fail
-            if (firstInstallmentDate.isAfter(currentDate.plusMonths(3))) {
-                fail("Assertion failed: First installment date is after 3 months from now.")
-            }
-        }
+        Assertions.assertThat(actual.installments).isSameAs(fakeCustomer.installments)
         Assertions.assertThat(actual).isNotNull
         Assertions.assertThat(actual).isSameAs(fakeCustomer)
         verify(exactly = 1) { customerRepository.save(fakeCustomer) }
