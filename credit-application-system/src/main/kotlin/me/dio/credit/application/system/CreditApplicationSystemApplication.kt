@@ -7,5 +7,13 @@ import org.springframework.boot.runApplication
 class CreditApplicationSystemApplication
 
 fun main(args: Array<String>) {
-	runApplication<CreditApplicationSystemApplication>(*args)
+	try{
+		runApplication<CreditApplicationSystemApplication>(*args)
+	}catch(e:Exception){
+
+		e.printStackTrace()
+
+	}finally{
+
+	}
 }
