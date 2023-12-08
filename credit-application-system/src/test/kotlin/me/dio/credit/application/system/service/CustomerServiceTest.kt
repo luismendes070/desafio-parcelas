@@ -17,6 +17,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.fail
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.fail
 import org.springframework.test.context.ActiveProfiles
 import java.math.BigDecimal
 import java.time.LocalDateTime
@@ -68,7 +69,7 @@ class CustomerServiceTest {
         //when
         val actual: Customer = customerService.save(fakeCustomer)
 
-        actual.installments = 48
+        // actual.installments = 48
 
         //then
         if (actual.installments > 0 && actual.installments < 48) {
